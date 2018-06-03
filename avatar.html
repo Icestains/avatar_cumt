@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Avatar</title>
+</head>
+
+<body>
+    <canvas id="myCanvas" width="500" height="500">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+
+    <input type="button" value="保存png图片" id="btn1" />
+    <input type="button" value="保存jpg图片" id="btn2" />
+
+    <!-- <script src="jquery.min.js"></script> -->
+    <script>
+        var img = new Image();
+        var logo = new Image();
+        img.src = 'img/avatar.jpg';
+        logo.src = 'img/cumtlogo.png';
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+        img.onload = function () {
+
+            ctx.drawImage(img, 0, 0, 500, 500);
+            ctx.drawImage(logo, 40, 40, 100, 100);
+
+        }
+        
+        //绘制图片
+        //绑定下载事件
+        var btn = document.getElementById('btn1');
+        btn.onclick = function () {
+            var type = 'png';
+            download(type);
+        }
+
+        document.getElementById('btn2').onclick = function () {
+            var type = 'jpg';
+            download(type);
+        }
+
+        //图片下载操作,指定图片类型
+        function download(type) {
+            //设置保存图片的类型
+            var imgdata = c.toDataURL(type);
+            //将mime-type改为image/octet-stream,强制让浏览器下载
+            var fixtype = function (type) {
+                type = type.toLocaleLowerCase().replace(/jpg/i, 'jpeg');
+                var r = type.match(/png|jpeg|bmp|gif/)[0];
+                return 'image/' + r;
+            }
+            imgdata = imgdata.replace(fixtype(type), 'image/octet-stream')
+            //将图片保存到本地
+            var saveFile = function (data, filename) {
+                var link = document.createElement('a');
+                link.href = data;
+                link.download = filename;
+                var event = document.createEvent('MouseEvents');
+                event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                link.dispatchEvent(event);
+            }
+            var filename = new Date().toLocaleDateString() + '.' + type;
+            saveFile(imgdata, filename);
+        }
+    </script>
+</body>
+
+</html>
